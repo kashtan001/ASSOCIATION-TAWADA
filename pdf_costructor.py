@@ -761,7 +761,7 @@ def fix_html_layout(template_name='contratto'):
     @page {
         size: A4;
         margin: 1cm;           /* 1cm отступ от края страницы до текста */
-        border: 4pt solid #013f25;  /* Синяя рамка вокруг текста (увеличена на 1pt) */
+        border: 4pt solid #741b47;  /* Обновленный цвет рамки */
         padding: 0;            /* Никаких дополнительных отступов */
     }
     
@@ -796,7 +796,7 @@ def fix_html_layout(template_name='contratto'):
     @page {
         size: A4;
         margin: 1cm;  /* Отступ как в garanzia */
-        border: 2pt solid #008bff;  /* Синяя рамка (на 2pt тоньше чем garanzia) */
+        border: 2pt solid #741b47;  /* Обновленный цвет рамки */
         padding: 0;  /* Отступ как в garanzia */
     }
     
@@ -928,7 +928,7 @@ def fix_html_layout(template_name='contratto'):
     @page {
         size: A4;
         margin: 1cm;  /* Отступ как в garanzia */
-        border: 4pt solid #013f25;  /* Синяя рамка как в garanzia (4pt) */
+        border: 4pt solid #741b47;  /* Обновленный цвет рамки (4pt) */
         padding: 0;  /* Отступ как в garanzia */
     }
     

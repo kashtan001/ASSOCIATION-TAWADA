@@ -70,9 +70,9 @@ def build_lettera_approvazione(data: dict) -> BytesIO:
 # ------------------------- Handlers -----------------------------------------
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     context.user_data.clear()
-    kb = [["/contrat", "/garantie"], ["/carte", "/approbation"]]
+    kb = [["/контракт", "/гарантия"], ["/карта", "/одобрение"]]
     await update.message.reply_text(
-        "Veuillez choisir un document :",
+        "Выберите документ:",
         reply_markup=ReplyKeyboardMarkup(kb, one_time_keyboard=True, resize_keyboard=True)
     )
     return CHOOSING_DOC
@@ -81,7 +81,7 @@ async def choose_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     doc_type = update.message.text
     context.user_data['doc_type'] = doc_type
     await update.message.reply_text(
-        "Veuillez saisir le nom et le prénom du client :",
+        "Введите имя и фамилию клиента:",
         reply_markup=ReplyKeyboardRemove()
     )
     return ASK_NAME
@@ -89,54 +89,54 @@ async def choose_doc(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
 async def ask_name(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     name = update.message.text.strip()
     dt = context.user_data['doc_type']
-    if dt in ('/garantie', '/гарантия'):
+    if dt in ('/garanzia', '/гарантия'):
         try:
             buf = build_lettera_garanzia(name)
             await update.message.reply_document(InputFile(buf, f"Garantie_{name}.pdf"))
         except Exception as e:
-            logger.error(f"Erreur de génération de garantie : {e}")
-            await update.message.reply_text(f"Erreur lors de la création du document : {e}")
+            logger.error(f"Ошибка генерации garanzia: {e}")
+            await update.message.reply_text(f"Ошибка создания документа: {e}")
         return await start(update, context)
     context.user_data['name'] = name
-    await update.message.reply_text("Veuillez saisir le montant (MAD) :")
+    await update.message.reply_text("Введите сумму (MAD):")
     return ASK_AMOUNT
 
 async def ask_amount(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     try:
         amt = float(update.message.text.replace('€','').replace(',','.').replace(' ',''))
     except:
-        await update.message.reply_text("Montant invalide, veuillez réessayer :")
+        await update.message.reply_text("Неверная сумма, попробуйте снова:")
         return ASK_AMOUNT
     context.user_data['amount'] = round(amt, 2)
     
-    # Pour tous les documents sauf garantie, demandez la durée
-    await update.message.reply_text("Veuillez saisir la durée (mois) :")
+    # Для всех документов кроме garanzia запрашиваем duration
+    await update.message.reply_text("Введите срок (месяцев):")
     return ASK_DURATION
 
 async def ask_duration(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     try:
         mn = int(update.message.text)
     except:
-        await update.message.reply_text("Durée invalide, veuillez réessayer :")
+        await update.message.reply_text("Неверный срок, попробуйте снова:")
         return ASK_DURATION
     context.user_data['duration'] = mn
     
     dt = context.user_data['doc_type']
     
-    # Pour approbation, utilisez un TAN fixe et générez le document immédiatement
+    # Для approvazione используем фиксированный TAN и сразу генерируем документ
     if dt in ('/approbation', '/одобрение'):
         d = context.user_data
-        d['tan'] = FIXED_TAN_APPROVAZIONE  # TAN fixe 7.15%
+        d['tan'] = FIXED_TAN_APPROVAZIONE  # Фиксированный TAN 7.15%
         try:
             buf = build_lettera_approvazione(d)
             await update.message.reply_document(InputFile(buf, f"Approbation_{d['name']}.pdf"))
         except Exception as e:
-            logger.error(f"Erreur de génération d'approbation : {e}")
-            await update.message.reply_text(f"Erreur lors de la création du document : {e}")
+            logger.error(f"Ошибка генерации approvazione: {e}")
+            await update.message.reply_text(f"Ошибка создания документа: {e}")
         return await start(update, context)
     
-    # Pour les autres documents, demandez le TAN
-    await update.message.reply_text(f"Veuillez saisir le TAN (%), Appuyez sur Entrée pour {DEFAULT_TAN}% :")
+    # Для других документов запрашиваем TAN
+    await update.message.reply_text(f"Введите TAN (%), Enter для {DEFAULT_TAN}%:")
     return ASK_TAN
 
 async def ask_tan(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -146,8 +146,8 @@ async def ask_tan(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     except:
         context.user_data['tan'] = DEFAULT_TAN
     
-    # Demandez le TAEG pour contrat et carte
-    await update.message.reply_text(f"Veuillez saisir le TAEG (%), Appuyez sur Entrée pour {DEFAULT_TAEG}% :")
+    # Запрашиваем TAEG для contratto и carta
+    await update.message.reply_text(f"Введите TAEG (%), Enter для {DEFAULT_TAEG}%:")
     return ASK_TAEG
 
 async def ask_taeg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
@@ -171,13 +171,13 @@ async def ask_taeg(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
             
         await update.message.reply_document(InputFile(buf, filename))
     except Exception as e:
-        logger.error(f"Erreur de génération PDF {dt} : {e}")
-        await update.message.reply_text(f"Erreur lors de la création du document : {e}")
+        logger.error(f"Ошибка генерации PDF {dt}: {e}")
+        await update.message.reply_text(f"Ошибка создания документа: {e}")
     
     return await start(update, context)
 
 async def cancel(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    await update.message.reply_text("Opération annulée.")
+    await update.message.reply_text("Операция отменена.")
     return await start(update, context)
 
 async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> None:
