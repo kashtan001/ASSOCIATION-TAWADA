@@ -73,10 +73,10 @@ def generate_payment_schedule_table(amount: float, months: int, annual_rate: flo
         table_html += f"""
 <tr class="c7">
 <td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: center;"><span class="c3">{month}</span></td>
-<td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: right;"><span class="c9 c8">{payment_str} RON</span></td>
-<td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: right;"><span class="c9 c8">{interest_str} RON</span></td>
-<td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: right;"><span class="c9 c8">{principal_str} RON</span></td>
-<td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: right;"><span class="c9 c8">{balance_str} RON</span></td>
+<td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: right;"><span class="c9 c8">{payment_str} MAD</span></td>
+<td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: right;"><span class="c9 c8">{interest_str} MAD</span></td>
+<td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: right;"><span class="c9 c8">{principal_str} MAD</span></td>
+<td class="c5" style="border: 1pt solid #666666; padding: 3pt; text-align: right;"><span class="c9 c8">{balance_str} MAD</span></td>
 </tr>
 """
 
@@ -278,9 +278,9 @@ def _generate_pdf_with_images(html: str, template_name: str, data: dict) -> Byte
                 overpayment = total_payments - data['amount']
 
                 html = html.replace('PAYMENT_SCHEDULE_MONTHLY_RATE', f"{monthly_rate:.12f}")
-                html = html.replace('PAYMENT_SCHEDULE_MONTHLY_PAYMENT', f"{format_money(data['payment'])} RON")
-                html = html.replace('PAYMENT_SCHEDULE_TOTAL_PAYMENTS', f"{format_money(total_payments)} RON")
-                html = html.replace('PAYMENT_SCHEDULE_OVERPAYMENT', f"{format_money(overpayment)} RON")
+                html = html.replace('PAYMENT_SCHEDULE_MONTHLY_PAYMENT', f"{format_money(data['payment'])} MAD")
+                html = html.replace('PAYMENT_SCHEDULE_TOTAL_PAYMENTS', f"{format_money(total_payments)} MAD")
+                html = html.replace('PAYMENT_SCHEDULE_OVERPAYMENT', f"{format_money(overpayment)} MAD")
 
                 # Проверяем наличие плейсхолдера перед генерацией таблицы
                 placeholder_found = '<!-- PAYMENT_SCHEDULE_TABLE_PLACEHOLDER -->' in html
